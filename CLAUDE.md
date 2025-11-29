@@ -8,32 +8,63 @@ LLM evaluation pipeline implementing Eugene Yan's "Product Evals in Three Simple
 
 **Inspiration:** https://eugeneyan.com/writing/product-evals/
 
-Key principles:
+**Repository:** https://github.com/nibzard/evals
+
+### Core Principles (Eugene Yan)
 - Binary pass/fail labels (not numeric scales)
 - Aim for 50-100 failures in 200+ samples for meaningful signal
 - One evaluator per dimension, not a "God Evaluator"
 - Use smaller models to generate organic failures
 - Target Cohen's Kappa 0.4-0.6 (substantial agreement)
+- Prioritize recall on failure detection (catching defects is critical)
+
+### Key Results
+- GPT-5-mini vs GPT-5.1: **Cohen's Kappa 0.615** (substantial agreement)
+- Fail Recall: **82.4%** (good at catching failures)
+- Human inter-rater reliability is often only kappa 0.2-0.3
 
 ## Commands
 
 **Always use Astral UV, never venv directly.**
 
 ```bash
-# Generate answers for questions using Gemini
-uv run scripts/generate_answers.py
+# Evaluation demos (three providers compared)
+uv run eval_demo_gpt5.py        # GPT-5.1 + Responses API + function calling (recommended)
+uv run eval_demo_gpt4.py        # GPT-4o-mini + Chat Completions
+uv run eval_demo_gemini.py      # Gemini 2.0 Flash Lite (may hit rate limits)
 
-# Label responses as pass/fail using GPT-5.1
-uv run scripts/label_responses.py
+# Verify evaluator against ground truth labels
+uv run verify_evaluator.py                    # Full 200 samples
+uv run verify_evaluator.py --sample 50        # Quick test with 50 samples
+uv run verify_evaluator.py --category edge_cases  # Filter by category
+uv run verify_evaluator.py --train-test       # Use 75/25 split
 
-# Run evaluation demo with metrics
-uv run eval_demo.py
+# Data generation pipeline
+uv run scripts/generate_hard_questions.py     # Generate questions + answers (GPT-5.1 + GPT-3.5)
+uv run scripts/label_responses.py             # Label responses (GPT-5.1 function calling)
+uv run scripts/generate_answers.py            # Generate answers (Gemini)
 
-# Generate harder questions (25%+ failure rate target)
-uv run scripts/generate_hard_questions.py
-
-# Add dependencies
+# Dependencies
 uv add package-name
+```
+
+## File Structure
+
+```
+├── eval_demo_gemini.py       # Gemini provider demo
+├── eval_demo_gpt4.py         # GPT-4o-mini provider demo
+├── eval_demo_gpt5.py         # GPT-5.1 provider demo (best practices)
+├── verify_evaluator.py       # Verify smaller model vs ground truth
+├── scripts/
+│   ├── generate_answers.py   # Gemini answer generation
+│   ├── generate_hard_questions.py  # Question generation (GPT-5.1)
+│   └── label_responses.py    # Labeling with function calling (GPT-5.1)
+├── data/
+│   ├── questions.csv         # v1: 3.5% fail rate (too low)
+│   └── questions_version_2.csv  # v2: 35.5% fail rate (good signal)
+├── EVAL_PROVIDERS.md         # Detailed provider comparison
+├── LESSONS_LEARNED.md        # API patterns and gotchas
+└── README.md                 # User documentation
 ```
 
 ## Datasets
@@ -43,59 +74,100 @@ uv add package-name
 | `data/questions.csv` | 200 | 7 | 3.5% | Gemini 2.0 Flash Lite |
 | `data/questions_version_2.csv` | 200 | 71 | 35.5% | GPT-3.5-turbo-0125 |
 
-**data/questions_version_2.csv** uses harder question categories designed for higher failure rates:
+### v2 Question Categories
 
 | Category | Fail Rate | Description |
 |----------|-----------|-------------|
 | precise_calculations | 60% | Math, code output, conversions |
 | temporal_changing | 60% | Current events, changing facts |
-| multi_part | 37% | Questions requiring multiple pieces of info |
+| multi_part | 37% | Questions requiring multiple pieces |
 | ambiguous_debatable | 26% | Contested facts, multiple valid answers |
 | edge_cases | 23% | Nuanced topics, exceptions |
-| trick_misconceptions | 14% | Common myths (model performed well here) |
+| trick_misconceptions | 14% | Common myths |
 
-## Architecture
+## Models & APIs
 
-### Pipeline Flow
+| Provider | Model | API | Use Case |
+|----------|-------|-----|----------|
+| OpenAI | gpt-5.1-2025-11-13 | Responses API | Labeling, question generation |
+| OpenAI | gpt-5-mini-2025-08-07 | Responses API | Evaluator (cheaper) |
+| OpenAI | gpt-4o-mini | Chat Completions | Demo comparison |
+| OpenAI | gpt-3.5-turbo-0125 | Chat Completions | Weak answer model |
+| Google | gemini-2.0-flash-lite | generate_content | Answer generation |
 
+## API Patterns
+
+### GPT-5.1 Responses API (Recommended)
+
+```python
+from openai import OpenAI
+client = OpenAI()
+
+# Key differences from Chat Completions:
+result = client.responses.create(
+    model="gpt-5.1-2025-11-13",
+    input=[...],                    # NOT "messages"
+    max_completion_tokens=100,      # NOT "max_tokens"
+    tools=[EVAL_TOOL],
+    tool_choice={"type": "function", "name": "submit_evaluation"},
+)
+
+# Output access
+for item in result.output:
+    if item.type == "function_call":
+        args = json.loads(item.arguments)
 ```
-data/questions.csv (questions only)
-    ↓
-scripts/generate_answers.py (Gemini 2.0 Flash Lite)
-    ↓
-data/questions.csv (questions + responses)
-    ↓
-scripts/label_responses.py (GPT-5.1 with function calling)
-    ↓
-data/questions.csv (questions + responses + labels)
-    ↓
-eval_demo.py (metrics: precision, recall, kappa)
+
+### Function Calling with Strict Schema
+
+```python
+EVAL_TOOL = {
+    "type": "function",
+    "name": "submit_evaluation",
+    "strict": True,  # Enforces schema compliance
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "verdict": {
+                "type": "string",
+                "enum": ["pass", "fail"],  # Only these values allowed
+            }
+        },
+        "required": ["verdict"],
+        "additionalProperties": False  # Required for strict mode
+    }
+}
 ```
 
-### Models
+### Chat Completions (GPT-4o-mini, GPT-3.5)
 
-| Provider | Model | Use Case |
-|----------|-------|----------|
-| Google | gemini-2.0-flash-lite | Answer generation (free tier, 30 RPM / 200 RPD) |
-| OpenAI | gpt-5.1-2025-11-13 | Question generation, labeling (Responses API) |
-| OpenAI | gpt-3.5-turbo-0125 | Weak answer model for generating failures |
+```python
+result = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=[{"role": "user", "content": prompt}],
+    max_tokens=100,
+)
+text = result.choices[0].message.content
+```
 
-### Key Patterns
+## Key Technical Insights
 
-**Function calling for reliable output** (see `scripts/label_responses.py`):
-- Use `strict: True` + `enum` for guaranteed schema compliance
-- Force tool call with `tool_choice={"type": "function", "name": "..."}`
+### 1. Function Calling > Text Parsing
+Text parsing is fragile ("Pass", "PASS", "I think it passes"). Use `strict: true` + `enum` for guaranteed values.
 
-**Rate limiting** (see `scripts/generate_answers.py`):
-- Gemini RPD (requests per day) is the bottleneck, not RPM
+### 2. Position Bias Detection
+Run comparisons twice with swapped order:
+- Same answer both times → genuine preference
+- Different answers → position bias (return "tie")
+
+### 3. Rate Limits
+- Gemini free tier: RPD (requests per day) is the bottleneck, not RPM
 - Use exponential backoff on 429 errors
 
-## Technical Reference
-
-See `LESSONS_LEARNED.md` for detailed API patterns:
-- OpenAI Responses API vs Chat Completions
-- GPT-5.1 parameter changes (`max_completion_tokens`, reasoning effort)
-- Provider comparison and rate limit tables
+### 4. Evaluation Metrics
+- **Cohen's Kappa**: 0.4-0.6 = substantial, >0.6 = excellent
+- **Fail Recall**: Priority metric (catching defects)
+- **Confidence Intervals**: `accuracy ± 1.96 * sqrt(acc * (1-acc) / n)`
 
 ## Environment
 
@@ -104,3 +176,27 @@ Required in `.env`:
 GOOGLE_API_KEY=...
 OPENAI_API_KEY=...
 ```
+
+## Documentation
+
+- `EVAL_PROVIDERS.md` - Detailed comparison of Gemini vs GPT-4o-mini vs GPT-5.1
+- `LESSONS_LEARNED.md` - API patterns, rate limits, parameter differences
+- `README.md` - User-facing documentation with quick start
+
+## Common Tasks
+
+### Adding a new evaluator dimension
+1. Create function in `eval_demo_*.py` following `evaluate_helpfulness()` pattern
+2. Use function calling with strict schema for reliable output
+3. Add to `run_eval_parallel()` call
+
+### Testing evaluator reliability
+```bash
+uv run verify_evaluator.py --sample 50
+```
+Look for:
+- Cohen's Kappa >= 0.4 (substantial agreement)
+- Fail Recall >= 80% (catching defects)
+
+### Generating more failures
+Use weaker answer model (GPT-3.5) or harder question categories (precise_calculations, temporal_changing).
