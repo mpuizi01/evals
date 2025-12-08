@@ -41,8 +41,8 @@ from evaluators.runner import (
 )
 
 # Configuration
-DEFAULT_MODEL = "gpt-5-mini-2025-08-07"
-DATA_FILE = "data/questions_version_2.csv"
+DEFAULT_MODEL = "gemini-2.0-flash-lite"
+DATA_FILE = "data/mnakic_questions.csv"
 
 
 def main():

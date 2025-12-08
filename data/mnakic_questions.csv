@@ -1,0 +1,17 @@
+﻿id,question,response,label,category
+1,Who composed the four seasons?,Antonio Vivaldi,pass,trick_misconceptions
+2,Which song starts with the line ‘Is this the real life? Is this just fantasy?’,Bohemian Rhapsody,pass,trick_misconceptions
+3,What’s the name of the album released by Michael Jackson in 1982?,Zombie,fail,trick_misconceptions
+4,Which musical instrument is known as the ‘king of instruments’?,Organ,pass,trick_misconceptions
+5,Which rock band was originally known as ‘Mookie Blaylock’?,Nirvana,fail,trick_misconceptions
+6,Which Beatles album features them crossing a road on the cover?,Abbey Road,pass,trick_misconceptions
+7,Which singer performed at the 2015 Super Bowl halftime show?,Rhianna,fail,trick_misconceptions
+8,Who released an album titled ’21’ in 2011?,Me,fail,trick_misconceptions
+9,From which country is the dance style ‘salsa’ originated?,Cuba,pass,trick_misconceptions
+10,What was the original name of The Beatles?,The Quarrymen,pass,trick_misconceptions
+11,Who sang the 1978 hit ‘I Will Survive’?,Gloria Gaynor,pass,trick_misconceptions
+12,Who composed ‘Moonlight Sonata’?,Tutankamon,fail,trick_misconceptions
+13,What is the main string instrument used in a bluegrass band?,Banjo,pass,trick_misconceptions
+14,Which female artist released ‘Bad Romance’ in 2009?,Lady Gaga,pass,trick_misconceptions
+15,Which 90s band is best known for their hit ‘Wonderwall’?,Smash Mouth,fail,trick_misconceptions
+16,Which singer is known for her hits ‘Like a Virgin’ and ‘Material Girl’?,Madonna,pass,trick_misconceptions
