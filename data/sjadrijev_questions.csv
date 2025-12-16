@@ -1,21 +1,21 @@
 id,question,response,label,category
-"1,Who holds the record for most points scored in a single NBA game?,""Wilt Chamberlain, 100 points"",pass,general"
-2,Which team has won the most NBA championships in history?,Boston Celtics and Los Angeles Lakers (17 titles each),pass,general
-"3,Which player has won the most MVP awards in NBA history?,""Kareem Abdul-Jabbar, 6 times"",pass,general"
-"4,What is the longest winning streak in a regular NBA season?,""33 wins, by Los Angeles Lakers in 1971-72"",pass,general"
-5,Which team was the NBA champion in 2016?,Cleveland Cavaliers,pass,general
-"6,How many NBA championships did Michael Jordan win?,""6 times (1991-1993, 1996-1998)"",pass,general"
-"7,Which player scored the most points in a single NBA season?,""Wilt Chamberlain, 4,029 points (1961-1962)"",pass,general"
-8,Which team has won the most Euroleague titles?,Real Madrid (10 titles),pass,general
-"9,Which player holds the record for most assists in a single NBA game?,""Scott Skiles, 30 assists in one game"",pass,general"
-"10,Who is the youngest player to ever debut in the NBA?,""Andrew Bynum, 18 years and 6 months"",pass,general"
-"11,How many NBA championships has Phil Jackson won as a coach?,""11 times (6 with Chicago Bulls, 5 with Los Angeles Lakers)"",pass,general"
-"12,Which player scored the most points in an NBA playoff game?,""LeBron James, 51 points against Washington Wizards in 2018"",fail,general"
-"13,What is the longest duration of a single NBA game?,""3OT (triple overtime), 6 minutes per overtime"",fail,general"
-"14,Who was the top scorer in the NBA for the 2020-2021 season?,""Bradley Beal, 31.3 points per game"",pass,general"
-"15,Which player has had the most triple-double performances in NBA history?,""Russell Westbrook, 184 triple-double performances"",pass,general"
-16,Which team won the NBA championship in 1999?,Los Angeles Lakers,fail,general
-17,Who was the top scorer in the NBA for the 2017-2018 season?,Kevin Durant,fail,general
-"18,""Which player was the fastest to reach 10,000 points in NBA history?"",LeBron James,fail,general"
-19,How many NBA championships did Tim Duncan win?,6,fail,general
-20,Which team won the NBA championship in 1983?,Boston Celtics,fail,general
+1,"Who holds the record for most points scored in a single NBA game?","Wilt Chamberlain, 100 points",pass,general
+2,"Which team has won the most NBA championships in history?","Boston Celtics and Los Angeles Lakers (17 titles each)",pass,general
+3,"Which player has won the most MVP awards in NBA history?","Kareem Abdul-Jabbar, 6 times",pass,general
+4,"What is the longest winning streak in a regular NBA season?","33 wins, by Los Angeles Lakers in 1971-72",pass,general
+5,"Which team was the NBA champion in 2016?","Cleveland Cavaliers",pass,general
+6,"How many NBA championships did Michael Jordan win?","6 times (1991-1993, 1996-1998)",pass,general
+7,"Which player scored the most points in a single NBA season?","Wilt Chamberlain, 4,029 points (1961-1962)",pass,general
+8,"Which team has won the most Euroleague titles?","Real Madrid (10 titles)",pass,general
+9,"Which player holds the record for most assists in a single NBA game?","Scott Skiles, 30 assists in one game",pass,general
+10,"Who is the youngest player to ever debut in the NBA?","Andrew Bynum, 18 years and 6 months",pass,general
+11,"How many NBA championships has Phil Jackson won as a coach?","11 times (6 with Chicago Bulls, 5 with Los Angeles Lakers)",pass,general
+12,"Which player scored the most points in an NBA playoff game?","LeBron James, 51 points against Washington Wizards in 2018",fail,general
+13,"What is the longest duration of a single NBA game?","3OT (triple overtime), 6 minutes per overtime",fail,general
+14,"Who was the top scorer in the NBA for the 2020-2021 season?","Bradley Beal, 31.3 points per game",pass,general
+15,"Which player has had the most triple-double performances in NBA history?","Russell Westbrook, 184 triple-double performances",pass,general
+16,"Which team won the NBA championship in 1999?","Los Angeles Lakers",fail,general
+17,"Who was the top scorer in the NBA for the 2017-2018 season?","Kevin Durant",fail,general
+18,"Which player was the fastest to reach 10,000 points in NBA history?","LeBron James",fail,general
+19,"How many NBA championships did Tim Duncan win?","6",fail,general
+20,"Which team won the NBA championship in 1983?","Boston Celtics",fail,general
