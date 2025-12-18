@@ -14,12 +14,8 @@ What you'll learn:
 See docs/glossary.md for terminology.
 """
 
-import google.generativeai as genai
+from openai import OpenAI
 import json
-import os
-
-os.environ["GOOGLE_API_KEY"] = ""
-genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
 
 # =============================================================================
 # STEP 1: Define what we're evaluating
@@ -64,7 +60,8 @@ def evaluate_sample(sample: dict) -> str:
 
     Returns: "pass" or "fail" (guaranteed by strict schema)
     """
-    client = genai.GenerativeModel("gemini-2.5-flash-lite")
+    client = OpenAI()
+
     # Build the prompt - tell the model exactly what to do
     prompt = f"""Evaluate if this response correctly answers the question.
 

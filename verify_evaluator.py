@@ -42,7 +42,7 @@ from evaluators.runner import (
 
 # Configuration
 DEFAULT_MODEL = "gpt-5-mini-2025-08-07"
-DATA_FILE = "data/mnakic_questions.csv"
+DATA_FILE = "data/questions_version_2.csv"
 
 
 def main():
